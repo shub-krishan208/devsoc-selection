@@ -1,6 +1,13 @@
 import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
+import { useMemo } from "react";
+
+/**
+ * @dev setting up the data for the table:
+ *  user table
+ * items table
+ */
 
 // --- FAKE DATA (Same as before) ---
 const mockItems = [
@@ -120,7 +127,7 @@ const mockUsers = [
 // --- END FAKE DATA ---
 
 // --- NEW COMPONENT: Searchable Dropdown ---
-const SearchableDropdown = ({ options, placeholder, value, onChange }) => {
+const SearchableDropdown = ({ options = [], placeholder, value, onChange }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const dropdownRef = useRef(null);
@@ -215,14 +222,7 @@ const SearchableDropdown = ({ options, placeholder, value, onChange }) => {
 };
 
 // --- NEW COMPONENT: Main Filters Form ---
-const ItemFilters = ({ categories, locations }) => {
-  const [filters, setFilters] = useState({
-    status: "",
-    category: "",
-    location: "",
-    date: "",
-  });
-
+const ItemFilters = ({ categories, locations, filters, setFilters }) => {
   const handleFilterChange = (key, value) => {
     setFilters((prev) => ({ ...prev, [key]: value }));
   };
@@ -288,7 +288,7 @@ const ItemFilters = ({ categories, locations }) => {
           </label>
           <input
             type="text"
-            placeholder="DD/MM/YYYY"
+            placeholder="DD-MM-YYYY"
             value={filters.date}
             onChange={(e) => handleFilterChange("date", e.target.value)}
             className="w-full px-3 py-2 rounded-lg bg-input text-foreground border border-border focus:ring-2 focus:ring-primary outline-none"
@@ -355,7 +355,7 @@ const ItemDetailsModal = ({ item, onClose }) => {
           </h3>
         </header>
         <main className="p-4 max-h-[70vh] overflow-y-auto">
-          <DetailRow label="ID" value={item.id} />
+          <DetailRow label="Item ID" value={item.id} />
           <DetailRow label="Title" value={item.title} />
           <DetailRow
             label="Description"
@@ -366,6 +366,9 @@ const ItemDetailsModal = ({ item, onClose }) => {
           <DetailRow label="Category" value={item.category} />
           <DetailRow label="Location" value={item.location} />
           <DetailRow label="Date" value={item.date} />
+          <DetailRow label="Reporter ID" value={item.User.id} />
+          <DetailRow label="Reporter" value={item.User.username} />
+          <DetailRow label="Reporter contact" value={item.User.email} />
           <DetailRow label="Contact Info" value={item.contactInfo} />
           <DetailRow label="Image URL" value={item.imageURL} />
         </main>
@@ -492,26 +495,83 @@ const UsersTable = ({ users }) => (
 );
 
 export default function Database() {
-  const userRole = "admin";
+  const userRole = localStorage.getItem("authToken")?.split(" ")[2];
 
   const [items, setItems] = useState([]);
   const [users, setUsers] = useState([]);
   const [currentTable, setCurrentTable] = useState("items");
   const [isLoading, setIsLoading] = useState(true);
   const [selectedItem, setSelectedItem] = useState(null); // State now holds the entire item object
+  const [filters, setFilters] = useState({
+    status: "",
+    category: "",
+    location: "",
+    date: "",
+  });
+
+  // getting items table ...
+  const getItems = async () => {
+    const baseUrl = `http://localhost:5000/api/items`;
+    const params = new URLSearchParams();
+    for (const [key, value] of Object.entries(filters)) {
+      if (value) {
+        params.append(key, value);
+      }
+    }
+
+    const queryString = params.toString();
+
+    const itemsUrl = queryString ? `${baseUrl}?${queryString}` : baseUrl;
+
+    console.log("Fetching from URL:", itemsUrl); // For debugging
+    try {
+      console.log("Fetching Items ...");
+      const res = await fetch(itemsUrl, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          authorization: localStorage.getItem("authToken"),
+        },
+      });
+
+      if (!res.ok) {
+        throw new Error(`Server error: ${res.status}`);
+      }
+
+      const data = await res.json();
+      console.log("Server response", data);
+      setItems(data);
+    } catch (err) {
+      console.error("Error getting data:", err);
+      alert("Something went wrong. Please try again.");
+    }
+  };
 
   useEffect(() => {
-    setIsLoading(true);
-    setTimeout(() => {
-      setItems(mockItems);
+    // Define an async function inside the effect
+    const fetchData = async () => {
+      setIsLoading(true);
+      await getItems(); // Correctly await the async fetch function
       if (userRole === "admin") {
         setUsers(mockUsers);
       }
       setIsLoading(false);
-    }, 1000);
-  }, [userRole]);
-  const categories = [...new Set(mockItems.map((item) => item.category))];
-  const locations = [...new Set(mockItems.map((item) => item.location))];
+    };
+
+    fetchData(); // Call the async function
+
+    // Add 'filters' to the dependency array
+  }, [userRole, filters]);
+
+  const categories = useMemo(
+    () => [...new Set(items.map((item) => item.category))],
+    [items]
+  );
+
+  const locations = useMemo(
+    () => [...new Set(items.map((item) => item.location))],
+    [items]
+  );
   const TabButton = ({ table, children }) => (
     <button
       onClick={() => setCurrentTable(table)}
@@ -527,6 +587,7 @@ export default function Database() {
   );
   const isLogin = localStorage.getItem("authToken");
   if (isLogin && isLogin.startsWith("Bearer")) {
+    // getItems();
     return (
       <div className="flex items-center justify-center min-h-screen bg-background p-4 sm:p-6 lg:p-8">
         <motion.div
@@ -538,7 +599,12 @@ export default function Database() {
           <header className="flex-shrink-0">
             <h1 className="text-2xl font-bold">Database Dashboard</h1>
             {currentTable === "items" && (
-              <ItemFilters categories={categories} locations={locations} />
+              <ItemFilters
+                categories={categories}
+                locations={locations}
+                filters={filters}
+                setFilters={setFilters}
+              />
             )}
 
             {userRole === "admin" && (

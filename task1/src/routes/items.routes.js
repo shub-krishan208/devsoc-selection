@@ -35,7 +35,7 @@ const router = express.Router();
  * @desc    Accepted queries: status, location, category, date
  * @access  Public
  */
-router.get("/", getAllItems);
+router.get("/", guard, getAllItems);
 /*
  * @route   GET /api/items/:id
  * @desc    Fetch complete details for a single item

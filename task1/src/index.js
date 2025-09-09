@@ -7,6 +7,7 @@ import User from "./models/user.js";
 import authRoutes from "./routes/auth.routes.js";
 import itemRoutes from "./routes/items.routes.js";
 import { connectAndSyncDb } from "./config/sequelize.js";
+import { Item, populateItems, populateUsers } from "./models/init.js";
 
 const app = express();
 const PORT = 5000;
@@ -52,6 +53,18 @@ const startServer = async () => {
   try {
     await connectAndSyncDb();
     await createDefaultAdmin();
+    const itemsCount = await Item.count({});
+    const userCount = await Item.count({});
+    if (userCount === 0) {
+      await populateUsers();
+    } else {
+      console.log("👤 Users database already exists ✅");
+    }
+    if (itemsCount === 0) {
+      await populateItems();
+    } else {
+      console.log("📙 Items database already exists ✅");
+    }
 
     //start the server after the database is connected
     app.listen(PORT, () => {

@@ -16,3 +16,6 @@ Why do we need the login setup again ... ? So that the admins can moderate the l
 ## TODO
 
 - apply backend endpoints to the frontend for relevant functioning
+- fix the docker compose issue of building for the first time and backend trying to connect before db is setup
+- date filter needs a calender widget to properly provide a date value otherwise it'll fuck with the useEffect hook.
+- also, make the entry DELETE, CREATE, UPDATE setup (delete is fairly simple, need a modal for other two)

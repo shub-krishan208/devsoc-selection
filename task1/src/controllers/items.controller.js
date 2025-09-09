@@ -17,12 +17,12 @@ export const getAllItems = async (req, res) => {
       include: {
         // Include the user who posted the item
         model: User,
-        attributes: ["id", "username"], // Only include these user attributes
+        attributes: ["id", "username", "email"], // Only include these user attributes
       },
       order: [["createdAt", "DESC"]], // Show newest items first
     });
 
-    if (!items) {
+    if (items.length === 0) {
       console.log("No items found !!");
       res.status(404).json({
         message: "No items found for the given query!!",
