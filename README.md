@@ -15,4 +15,4 @@ Why do we need the login setup again ... ? So that the admins can moderate the l
 
 ## TODO
 
-- follow through the last gemini prompt and we're done for this one.
+- apply backend endpoints to the frontend for relevant functioning

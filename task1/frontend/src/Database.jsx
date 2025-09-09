@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { Link } from "react-router-dom";
 
 // --- FAKE DATA (Same as before) ---
 const mockItems = [
@@ -235,7 +236,7 @@ const ItemFilters = ({ categories, locations }) => {
       initial={{ opacity: 0, y: -20, height: 0 }}
       animate={{ opacity: 1, y: 0, height: "auto" }}
       transition={{ duration: 0.3 }}
-      //   className="overflow-hidden"
+      //   className="overflow-hidden" //commmented this out as it waws clipping the dropdown menu
     >
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-4 py-4">
         {/* Status */}
@@ -524,55 +525,80 @@ export default function Database() {
       {children}
     </button>
   );
+  const isLogin = localStorage.getItem("authToken");
+  if (isLogin && isLogin.startsWith("Bearer")) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-background p-4 sm:p-6 lg:p-8">
+        <motion.div
+          initial={{ opacity: 0, y: 40 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.1 }}
+          className="w-full max-w-7xl h-[90vh] bg-card text-foreground rounded-2xl shadow-lg flex flex-col p-6"
+        >
+          <header className="flex-shrink-0">
+            <h1 className="text-2xl font-bold">Database Dashboard</h1>
+            {currentTable === "items" && (
+              <ItemFilters categories={categories} locations={locations} />
+            )}
 
-  return (
-    <div className="flex items-center justify-center min-h-screen bg-background p-4 sm:p-6 lg:p-8">
-      <motion.div
-        initial={{ opacity: 0, y: 40 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay: 0.1 }}
-        className="w-full max-w-7xl h-[90vh] bg-card text-foreground rounded-2xl shadow-lg flex flex-col p-6"
-      >
-        <header className="flex-shrink-0">
-          <h1 className="text-2xl font-bold">Database Dashboard</h1>
-          {currentTable === "items" && (
-            <ItemFilters categories={categories} locations={locations} />
+            {userRole === "admin" && (
+              <nav className="mt-4 border-b border-border">
+                <TabButton table="items">Items</TabButton>
+                <TabButton table="users">Users</TabButton>
+              </nav>
+            )}
+          </header>
+
+          <main className="flex-grow mt-4 overflow-y-auto">
+            {isLoading ? (
+              <div className="flex items-center justify-center h-full">
+                <p className="text-muted-foreground">Loading data...</p>
+              </div>
+            ) : (
+              <>
+                {currentTable === "items" && (
+                  <ItemsTable items={items} onSelectItem={setSelectedItem} />
+                )}
+                {userRole === "admin" && currentTable === "users" && (
+                  <UsersTable users={users} />
+                )}
+              </>
+            )}
+          </main>
+        </motion.div>
+
+        <AnimatePresence>
+          {selectedItem && (
+            <ItemDetailsModal
+              item={selectedItem}
+              onClose={() => setSelectedItem(null)}
+            />
           )}
-
-          {userRole === "admin" && (
-            <nav className="mt-4 border-b border-border">
-              <TabButton table="items">Items</TabButton>
-              <TabButton table="users">Users</TabButton>
-            </nav>
-          )}
-        </header>
-
-        <main className="flex-grow mt-4 overflow-y-auto">
-          {isLoading ? (
-            <div className="flex items-center justify-center h-full">
-              <p className="text-muted-foreground">Loading data...</p>
-            </div>
-          ) : (
-            <>
-              {currentTable === "items" && (
-                <ItemsTable items={items} onSelectItem={setSelectedItem} />
-              )}
-              {userRole === "admin" && currentTable === "users" && (
-                <UsersTable users={users} />
-              )}
-            </>
-          )}
-        </main>
-      </motion.div>
-
-      <AnimatePresence>
-        {selectedItem && (
-          <ItemDetailsModal
-            item={selectedItem}
-            onClose={() => setSelectedItem(null)}
-          />
-        )}
-      </AnimatePresence>
-    </div>
-  );
+        </AnimatePresence>
+      </div>
+    );
+  } else {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen bg-background p-4 text-center">
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          <h2 className="text-3xl font-bold text-foreground mb-3">
+            Access Denied
+          </h2>
+          <p className="text-muted-foreground mb-8">
+            You must be logged in to view the database.
+          </p>
+          <Link
+            to="/"
+            className="inline-block px-6 py-2 rounded-lg bg-primary text-primary-foreground font-medium hover:brightness-110 transition-transform hover:scale-105"
+          >
+            Return to Login
+          </Link>
+        </motion.div>
+      </div>
+    );
+  }
 }
