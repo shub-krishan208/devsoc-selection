@@ -1,0 +1,116 @@
+/* Import Tailwind's core styles */
+@import "tailwindcss";
+@import "tw-animate-css";
+/*
+  BASE THEME VARIABLES
+*/
+
+@theme {
+  --container-center: true;
+  --container-padding: 2rem;
+  --container-screen-2xl: 1400px;
+
+  --radius-lg: var(--radius);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-sm: calc(var(--radius) - 4px);
+
+  --color-border: hsl(var(--border));
+  --color-input: hsl(var(--input));
+  --color-ring: hsl(var(--ring));
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+
+  --color-secondary: hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+
+  --color-accent: hsl(var(--accent));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+
+  /* Anime extra palette */
+  --color-otaku-pink: hsl(var(--otaku-pink));
+  --color-otaku-blue: hsl(var(--otaku-blue));
+  --color-otaku-purple: hsl(var(--otaku-purple));
+  --color-otaku-yellow: hsl(var(--otaku-yellow));
+
+  --animate-float: float 3s ease-in-out infinite;
+  --animate-glow: glow 2s ease-in-out infinite alternate;
+}
+
+/* === Light Mode (still black/blue but lighter variant) === */
+:root {
+  --background: 220 25% 6%; /* pure deep blackish navy */
+  --foreground: 200 100% 98%; /* almost white-blue */
+
+  --card: 220 30% 12%;
+  --card-foreground: 200 100% 98%;
+
+  --primary: 210 100% 65%; /* glowing neon blue */
+  --primary-foreground: 0 0% 0%;
+
+  --secondary: 195 100% 55%; /* aqua neon */
+  --secondary-foreground: 0 0% 0%;
+
+  --accent: 240 95% 70%; /* neon purple */
+  --accent-foreground: 0 0% 0%;
+
+  --otaku-pink: 310 100% 75%;
+  --otaku-blue: 200 100% 70%;
+  --otaku-purple: 260 100% 75%;
+  --otaku-yellow: 55 100% 65%;
+
+  --border: 220 20% 25%;
+  --input: 220 20% 18%;
+  --ring: 210 100% 65%;
+
+  --radius: 0.75rem;
+}
+
+/* Keyframes */
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-12px);
+  }
+}
+@keyframes glow {
+  0%,
+  100% {
+    box-shadow: 0 0 20px hsl(var(--primary) / 0.5);
+  }
+  50% {
+    box-shadow: 0 0 40px hsl(var(--secondary) / 0.8);
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground font-sans transition-colors duration-500; /* Added transition! */
+  }
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+@layer base {
+  html {
+    font-size: 16px; /* base */
+  }
+  @media (max-width: 640px) {
+    html {
+      font-size: 15px; /* slightly smaller for small screens */
+    }
+  }
+}
