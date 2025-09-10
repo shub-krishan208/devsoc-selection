@@ -20,3 +20,5 @@ Why do we need the login setup again ... ? So that the admins can moderate the l
 - date filter needs a calender widget to properly provide a date value otherwise it'll fuck with the useEffect hook.
 - also, make the entry DELETE, CREATE, UPDATE setup (delete is fairly simple, need a modal for other two) (prolly add update n delete in teh actions col of the table, and new on tehe same line as apply filter .. but on the left side)
 - also make a delete all function ... cuz why not!! (admin only)
+- user db api call required ... setup controllers for this shit (some shit is wrong here)
+- fix this weird bug where the create new modal just doesnt take values normally

@@ -2,12 +2,10 @@ import express from "express";
 import cors from "cors";
 // require("dotenv").config();
 
-import User from "./models/user.js";
-
 import authRoutes from "./routes/auth.routes.js";
 import itemRoutes from "./routes/items.routes.js";
 import { connectAndSyncDb } from "./config/sequelize.js";
-import { Item, populateItems, populateUsers } from "./models/init.js";
+import { Item, User, populateItems, populateUsers } from "./models/init.js";
 
 const app = express();
 const PORT = 5000;
@@ -36,6 +34,7 @@ const createDefaultAdmin = async () => {
       await User.create({
         username: "admin",
         password: "password123",
+        email: "shubhamkrishan999@gmail.com",
         role: "admin",
       });
       console.log(

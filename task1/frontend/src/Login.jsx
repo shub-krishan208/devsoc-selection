@@ -37,6 +37,15 @@ export default function Login() {
     }
   };
   const handleLogin = async (username, password) => {
+    if (
+      localStorage.getItem("authToken") &&
+      localStorage.getItem("authToken").startsWith("Bearer")
+    ) {
+      console.log("User already logged in!");
+      navigate("/database");
+      return;
+    }
+
     try {
       console.log("Loggin in ...");
       const res = await fetch("http://localhost:5000/api/auth/login", {
@@ -48,7 +57,7 @@ export default function Login() {
       });
 
       if (!res.ok) {
-        throw new Error(`Server error: ${res.status}`);
+        throw new Error(`Server error: ${res.status}, message: ${res.message}`);
       }
 
       const data = await res.json(); // assuming backend sends JSON
