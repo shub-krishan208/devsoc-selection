@@ -36,7 +36,7 @@ const mockItems = [
     location: "Gym",
     date: "07-09-2025",
     contactInfo: "admin@example.com",
-    imageURL: "htts://example.com/image.jpg",
+    imageURL: "https://example.com/image.jpg",
     userId: "2",
   },
   {

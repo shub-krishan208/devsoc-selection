@@ -130,7 +130,7 @@ const ItemFilters = ({
   locations,
   filters,
   setFilters,
-  setIsCreateModalOpen,
+  handleCreateSubmit,
 }) => {
   const handleFilterChange = (key, value) => {
     setFilters((prev) => ({ ...prev, [key]: value }));
@@ -140,127 +140,139 @@ const ItemFilters = ({
     setFilters({ status: "", category: "", location: "", date: "" });
   };
 
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   return (
-    <motion.div
-      initial={{ opacity: 0, y: -20, height: 0 }}
-      animate={{ opacity: 1, y: 0, height: "auto" }}
-      transition={{ duration: 0.3 }}
-      //   className="overflow-hidden" //commmented this out as it waws clipping the dropdown menu
-    >
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-4 py-4">
-        {/* Status */}
-        <div className="lg:col-span-1">
-          <label className="block text-sm mb-1 text-muted-foreground">
-            Status
-          </label>
-          <select
-            value={filters.status}
-            onChange={(e) => handleFilterChange("status", e.target.value)}
-            className="w-full px-3 py-2 rounded-lg bg-input text-foreground border border-border focus:ring-2 focus:ring-primary outline-none"
-          >
-            <option value="">All</option>
-            <option value="lost">Lost</option>
-            <option value="found">Found</option>
-          </select>
-        </div>
+    <>
+      <motion.div
+        initial={{ opacity: 0, y: -20, height: 0 }}
+        animate={{ opacity: 1, y: 0, height: "auto" }}
+        transition={{ duration: 0.3 }}
+        //   className="overflow-hidden" //commmented this out as it waws clipping the dropdown menu
+      >
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-4 py-4">
+          {/* Status */}
+          <div className="lg:col-span-1">
+            <label className="block text-sm mb-1 text-muted-foreground">
+              Status
+            </label>
+            <select
+              value={filters.status}
+              onChange={(e) => handleFilterChange("status", e.target.value)}
+              className="w-full px-3 py-2 rounded-lg bg-input text-foreground border border-border focus:ring-2 focus:ring-primary outline-none"
+            >
+              <option value="">All</option>
+              <option value="lost">Lost</option>
+              <option value="found">Found</option>
+            </select>
+          </div>
 
-        {/* Category */}
-        <div className="lg:col-span-2">
-          <label className="block text-sm mb-1 text-muted-foreground">
-            Category
-          </label>
-          <SearchableDropdown
-            options={categories}
-            placeholder="Select a category"
-            value={filters.category}
-            onChange={(val) => handleFilterChange("category", val)}
-          />
-        </div>
+          {/* Category */}
+          <div className="lg:col-span-2">
+            <label className="block text-sm mb-1 text-muted-foreground">
+              Category
+            </label>
+            <SearchableDropdown
+              options={categories}
+              placeholder="Select a category"
+              value={filters.category}
+              onChange={(val) => handleFilterChange("category", val)}
+            />
+          </div>
 
-        {/* Location */}
-        <div className="lg:col-span-2">
-          <label className="block text-sm mb-1 text-muted-foreground">
-            Location
-          </label>
-          <SearchableDropdown
-            options={locations}
-            placeholder="Select a location"
-            value={filters.location}
-            onChange={(val) => handleFilterChange("location", val)}
-          />
-        </div>
+          {/* Location */}
+          <div className="lg:col-span-2">
+            <label className="block text-sm mb-1 text-muted-foreground">
+              Location
+            </label>
+            <SearchableDropdown
+              options={locations}
+              placeholder="Select a location"
+              value={filters.location}
+              onChange={(val) => handleFilterChange("location", val)}
+            />
+          </div>
 
-        {/* Date */}
-        <div className="lg:col-span-1">
-          <label className="block text-sm mb-1 text-muted-foreground">
-            Date
-          </label>
-          <input
-            type="date"
-            value={filters.date}
-            onChange={(e) => handleFilterChange("date", e.target.value)}
-            className="w-full px-3 py-2 rounded-lg bg-input text-foreground border border-border focus:ring-2 focus:ring-primary outline-none"
-          />
+          {/* Date */}
+          <div className="lg:col-span-1">
+            <label className="block text-sm mb-1 text-muted-foreground">
+              Date
+            </label>
+            <input
+              type="date"
+              value={filters.date}
+              onChange={(e) => handleFilterChange("date", e.target.value)}
+              className="w-full px-3 py-2 rounded-lg bg-input text-foreground border border-border focus:ring-2 focus:ring-primary outline-none"
+            />
+          </div>
         </div>
-      </div>
-      <div className="justify-between flex">
-        <div className="flex gap-2 pb-4">
-          <button
-            onClick={() => setIsCreateModalOpen(true)}
-            className="px-4 py-2 text-sm rounded-lg bg-green-600 text-white font-medium hover:brightness-125 transition"
-          >
-            +New
-          </button>
-          <form className="w-full max-w-md">
-            <div className="flex items-center gap-2">
-              <div className="relative w-full">
-                {/* Search Icon */}
-                <div className="absolute left-3 top-1/2 -translate-y-1/2">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-5 w-5 text-muted-foreground"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    strokeWidth={2}
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                    />
-                  </svg>
+        <div className="justify-between flex">
+          <div className="flex gap-2 pb-4">
+            <button
+              onClick={() => setIsCreateModalOpen(true)}
+              className="px-4 py-2 text-sm rounded-lg bg-green-600 text-white font-medium hover:brightness-125 transition"
+            >
+              +New
+            </button>
+            <form className="w-full max-w-md">
+              <div className="flex items-center gap-2">
+                <div className="relative w-full">
+                  {/* Search Icon */}
+                  <div className="absolute left-3 top-1/2 -translate-y-1/2">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-5 w-5 text-muted-foreground"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      strokeWidth={2}
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                      />
+                    </svg>
+                  </div>
+                  {/* Input Field */}
+                  <input
+                    type="text"
+                    placeholder="Search Using ID ..."
+                    className="w-full rounded-lg border border-border bg-input py-2 pl-10 pr-4 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+                  />
                 </div>
-                {/* Input Field */}
-                <input
-                  type="text"
-                  placeholder="Search Using ID ..."
-                  className="w-full rounded-lg border border-border bg-input py-2 pl-10 pr-4 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-                />
+                {/* Search Button */}
+                <button
+                  type="submit"
+                  className="rounded-lg bg-primary px-4 py-2 font-medium text-primary-foreground transition hover:brightness-110"
+                >
+                  Search
+                </button>
               </div>
-              {/* Search Button */}
-              <button
-                type="submit"
-                className="rounded-lg bg-primary px-4 py-2 font-medium text-primary-foreground transition hover:brightness-110"
-              >
-                Search
-              </button>
-            </div>
-          </form>
+            </form>
+          </div>
+          <div className="flex justify-end gap-2 pb-4">
+            <button
+              onClick={handleClearFilters}
+              className="px-4 py-2 text-sm rounded-lg bg-secondary text-secondary-foreground font-medium hover:brightness-125 transition"
+            >
+              Clear
+            </button>
+            <button className="px-4 py-2 text-sm rounded-lg bg-primary text-primary-foreground font-medium hover:brightness-110 transition">
+              Apply Filters
+            </button>
+          </div>
         </div>
-        <div className="flex justify-end gap-2 pb-4">
-          <button
-            onClick={handleClearFilters}
-            className="px-4 py-2 text-sm rounded-lg bg-secondary text-secondary-foreground font-medium hover:brightness-125 transition"
-          >
-            Clear
-          </button>
-          <button className="px-4 py-2 text-sm rounded-lg bg-primary text-primary-foreground font-medium hover:brightness-110 transition">
-            Apply Filters
-          </button>
-        </div>
-      </div>
-    </motion.div>
+      </motion.div>
+      <AnimatePresence mode="wait">
+        {isCreateModalOpen && (
+          <CreateItemModal
+            key="create-prop"
+            onClose={() => setIsCreateModalOpen(false)}
+            onSubmit={handleCreateSubmit}
+          />
+        )}
+      </AnimatePresence>
+    </>
   );
 };
 
@@ -510,65 +522,83 @@ const CreateItemModal = ({ onClose, onSubmit }) => {
   );
 };
 
-const ItemsTable = ({ items, onSelectItem }) => (
-  <table className="w-full text-sm text-left border-collapse">
-    <thead className="sticky top-0 bg-card z-10">
-      <tr>
-        <th className="p-3 font-medium text-muted-foreground border-b border-border">
-          ID
-        </th>
-        <th className="p-3 font-medium text-muted-foreground border-b border-border">
-          Title
-        </th>
-        <th className="p-3 font-medium text-muted-foreground border-b border-border">
-          Status
-        </th>
-        <th className="p-3 font-medium text-muted-foreground border-b border-border">
-          Category
-        </th>
-        <th className="p-3 font-medium text-muted-foreground border-b border-border">
-          Date
-        </th>
-        <th className="p-3 font-medium text-muted-foreground border-b border-border text-center">
-          Actions
-        </th>
-      </tr>
-    </thead>
-    <tbody>
-      {items.map((item) => (
-        <tr key={item.id} className="even:bg-accent/50 hover:bg-accent">
-          <td className="p-3 border-b border-border">{item.id}</td>
-          <td className="p-3 border-b border-border font-medium text-foreground max-w-xs truncate">
-            {item.title}
-          </td>
-          <td className="p-3 border-b border-border">
-            <span
-              className={`px-2 py-1 text-xs font-semibold rounded-full ${
-                item.status === "lost"
-                  ? "bg-red-700/20 text-red-500"
-                  : "bg-green-500/20 text-green-400"
-              }`}
-            >
-              {item.status}
-            </span>
-          </td>
-          <td className="p-3 border-b border-border">{item.category}</td>
-          <td className="p-3 border-b border-border text-muted-foreground">
-            {item.date}
-          </td>
-          <td className="p-3 border-b border-border text-center">
-            <button
-              onClick={() => onSelectItem(item)}
-              className="px-3 py-1 text-xs font-medium bg-secondary text-secondary-foreground rounded-md hover:bg-primary hover:text-primary-foreground transition-colors"
-            >
-              View
-            </button>
-          </td>
+const ItemsTable = ({ items, onSelectItem, onDelete, onUpdate }) => {
+  // item is bascially one object from teh array of objects in teh items array
+  const handleDelete = (item) => {};
+  const handleUpdate = (item) => {};
+
+  return (
+    <table className="w-full text-sm text-left border-collapse">
+      <thead className="sticky top-0 bg-card z-10">
+        <tr>
+          <th className="p-3 font-medium text-muted-foreground border-b border-border">
+            ID
+          </th>
+          <th className="p-3 font-medium text-muted-foreground border-b border-border">
+            Title
+          </th>
+          <th className="p-3 font-medium text-muted-foreground border-b border-border">
+            Status
+          </th>
+          <th className="p-3 font-medium text-muted-foreground border-b border-border">
+            Category
+          </th>
+          <th className="p-3 font-medium text-muted-foreground border-b border-border">
+            Date
+          </th>
+          <th className="p-3 font-medium text-muted-foreground border-b border-border text-center">
+            Actions
+          </th>
         </tr>
-      ))}
-    </tbody>
-  </table>
-);
+      </thead>
+      <tbody>
+        {items.map((item) => (
+          <tr key={item.id} className="even:bg-accent/50 hover:bg-accent">
+            <td className="p-3 border-b border-border">{item.id}</td>
+            <td className="p-3 border-b border-border font-medium text-foreground max-w-xs truncate">
+              {item.title}
+            </td>
+            <td className="p-3 border-b border-border">
+              <span
+                className={`px-2 py-1 text-xs font-semibold rounded-full ${
+                  item.status === "lost"
+                    ? "bg-red-700/20 text-red-500"
+                    : "bg-green-500/20 text-green-400"
+                }`}
+              >
+                {item.status}
+              </span>
+            </td>
+            <td className="p-3 border-b border-border">{item.category}</td>
+            <td className="p-3 border-b border-border text-muted-foreground">
+              {item.date}
+            </td>
+            <td className="flex justify-end p-3 gap-2 border-b border-border text-center">
+              <button
+                onClick={() => onSelectItem(item)}
+                className="px-3 py-1 text-xs font-medium bg-secondary text-secondary-foreground rounded-md hover:bg-primary hover:text-primary-foreground transition-colors"
+              >
+                View
+              </button>
+              <button
+                onClick={() => handleDelete(item)}
+                className="px-3 py-1 text-xs font-medium bg-secondary text-secondary-foreground rounded-md hover:bg-primary hover:text-primary-foreground transition-colors"
+              >
+                Delete
+              </button>
+              <button
+                onClick={() => handleUpdate(item)}
+                className="px-3 py-1 text-xs font-medium bg-secondary text-secondary-foreground rounded-md hover:bg-primary hover:text-primary-foreground transition-colors"
+              >
+                Update
+              </button>
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  );
+};
 
 const UsersTable = ({ users }) => (
   <table className="w-full text-sm text-left border-collapse">
@@ -633,7 +663,7 @@ export default function Database() {
     location: "",
     date: "",
   });
-  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+
   // getting items table ...
   const getItems = async () => {
     const baseUrl = `http://localhost:5000/api/items`;
@@ -733,6 +763,48 @@ export default function Database() {
       console.error("Error creating item:", err);
     }
   };
+  const onDelete = async (item) => {
+    console.log("Submitting new item:", item);
+    // --- Your API call logic will go here ---
+    try {
+      const res = await fetch("http://localhost:5000/api/items", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          authorization: localStorage.getItem("authToken"),
+        },
+        body: JSON.stringify(item),
+      });
+      if (res.ok) {
+        await getItems(); // Re-fetch items to show the new one
+      } else {
+        console.error("Failed to create item.");
+      }
+    } catch (err) {
+      console.error("Error creating item:", err);
+    }
+  };
+  const onUpdate = async (item) => {
+    console.log("Submitting new item:", item);
+    // --- Your API call logic will go here ---
+    try {
+      const res = await fetch("http://localhost:5000/api/items", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          authorization: localStorage.getItem("authToken"),
+        },
+        body: JSON.stringify(item),
+      });
+      if (res.ok) {
+        await getItems(); // Re-fetch items to show the new one
+      } else {
+        console.error("Failed to create item.");
+      }
+    } catch (err) {
+      console.error("Error creating item:", err);
+    }
+  };
 
   // const handleCreateNew = () => setIsCreateModalOpen(true);
   if (isLogin && isLogin.startsWith("Bearer")) {
@@ -753,7 +825,7 @@ export default function Database() {
                 locations={locations}
                 filters={filters}
                 setFilters={setFilters}
-                setIsCreateModalOpen={setIsCreateModalOpen}
+                handleCreateSubmit={handleCreateSubmit}
               />
             )}
 
@@ -773,7 +845,12 @@ export default function Database() {
             ) : (
               <>
                 {currentTable === "items" && (
-                  <ItemsTable items={items} onSelectItem={setSelectedItem} />
+                  <ItemsTable
+                    items={items}
+                    onSelectItem={setSelectedItem}
+                    onDelete={onDelete}
+                    onUpdate={onUpdate}
+                  />
                 )}
                 {userRole === "admin" && currentTable === "users" && (
                   <UsersTable users={users} />
@@ -789,14 +866,6 @@ export default function Database() {
               key="details-prop"
               item={selectedItem}
               onClose={() => setSelectedItem(null)}
-            />
-          )}
-
-          {isCreateModalOpen && (
-            <CreateItemModal
-              key="create-prop"
-              onClose={() => setIsCreateModalOpen(false)}
-              onSubmit={handleCreateSubmit}
             />
           )}
         </AnimatePresence>
