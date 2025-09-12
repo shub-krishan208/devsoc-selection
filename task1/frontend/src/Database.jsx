@@ -524,7 +524,6 @@ const CreateItemModal = ({ onClose, onSubmit }) => {
 
 const ItemsTable = ({ items, onSelectItem, onDelete, onUpdate }) => {
   // item is bascially one object from teh array of objects in teh items array
-  const handleDelete = (item) => {};
   const handleUpdate = (item) => {};
 
   return (
@@ -581,7 +580,7 @@ const ItemsTable = ({ items, onSelectItem, onDelete, onUpdate }) => {
                 View
               </button>
               <button
-                onClick={() => handleDelete(item)}
+                onClick={() => onDelete(item)}
                 className="px-3 py-1 text-xs font-medium bg-secondary text-secondary-foreground rounded-md hover:bg-primary hover:text-primary-foreground transition-colors"
               >
                 Delete
@@ -764,16 +763,15 @@ export default function Database() {
     }
   };
   const onDelete = async (item) => {
-    console.log("Submitting new item:", item);
+    console.log("Deleting the item with id: ", item.id);
     // --- Your API call logic will go here ---
     try {
-      const res = await fetch("http://localhost:5000/api/items", {
-        method: "POST",
+      const res = await fetch(`http://localhost:5000/api/items/${item.id}`, {
+        method: "DELETE",
         headers: {
           "Content-Type": "application/json",
           authorization: localStorage.getItem("authToken"),
         },
-        body: JSON.stringify(item),
       });
       if (res.ok) {
         await getItems(); // Re-fetch items to show the new one
@@ -788,8 +786,8 @@ export default function Database() {
     console.log("Submitting new item:", item);
     // --- Your API call logic will go here ---
     try {
-      const res = await fetch("http://localhost:5000/api/items", {
-        method: "POST",
+      const res = await fetch(`http://localhost:5000/api/items/${item.id}`, {
+        method: "PUT",
         headers: {
           "Content-Type": "application/json",
           authorization: localStorage.getItem("authToken"),
